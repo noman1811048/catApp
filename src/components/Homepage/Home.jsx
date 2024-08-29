@@ -4,6 +4,7 @@ import Header from '../Header/Header';
 import VotingTab from '../VotingTab/VotingTab';
 import BreedsTab from '../BreedsTab/BreedsTab';
 import FavsTab from '../FavsTab/FavsTab';
+import { Heart, Search } from 'lucide-react';
 
 const Home = () => {
     const navigate = useNavigate();
@@ -48,26 +49,30 @@ const Home = () => {
                     </div>
                     <div className="w-1/2">
                         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-                            <div className="flex justify-between p-4 border-b border-gray-200">
+                            <div className="flex justify-start p-4 border-b border-gray-200">
                                 <button
-                                    className={`flex items-center ${activeTab === 'Voting' ? 'text-orange-500' : 'text-gray-600 hover:text-orange-500'}`}
+                                    className={`flex items-center mr-4 ${activeTab === 'Voting' ? 'text-orange-500' : 'text-gray-600 hover:text-orange-500'}`}
                                     onClick={() => handleTabChange('Voting')}
                                 >
+                                    <span className="mr-2">⇧⇩</span>
                                     Voting
                                 </button>
                                 <button
-                                    className={`flex items-center ${activeTab === 'Breeds' ? 'text-orange-500' : 'text-gray-600 hover:text-orange-500'}`}
+                                    className={`flex items-center mr-4 ${activeTab === 'Breeds' ? 'text-orange-500' : 'text-gray-600 hover:text-orange-500'}`}
                                     onClick={() => handleTabChange('Breeds')}
                                 >
+                                    <Search className="mr-2" size={18} />
                                     Breeds
                                 </button>
                                 <button
                                     className={`flex items-center ${activeTab === 'Favs' ? 'text-orange-500' : 'text-gray-600 hover:text-orange-500'}`}
                                     onClick={() => handleTabChange('Favs')}
                                 >
+                                    <Heart className="mr-2" size={18} />
                                     Favs
                                 </button>
                             </div>
+
                             {activeTab === 'Voting' && <VotingTab />}
                             {activeTab === 'Breeds' && <BreedsTab />}
                             {activeTab === 'Favs' && <FavsTab />}

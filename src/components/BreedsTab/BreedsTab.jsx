@@ -104,6 +104,7 @@ const BreedsTab = () => {
             {selectedBreed.name} <span className="font-normal text-gray-500">({selectedBreed.origin})</span>
           </h3>
           <p className="mt-2 text-gray-700">{selectedBreed.description}</p>
+          <p>The Abyssinian is easy to care for, and a joy to have in your home. They’re affectionate cats and love both people and other animals.</p>
           <a href={`https://en.wikipedia.org/wiki/${selectedBreed.name}_cat`} target="_blank" rel="noopener noreferrer" className="text-orange-500 mt-2 block uppercase text-sm font-semibold">
             Wikipedia
           </a>
