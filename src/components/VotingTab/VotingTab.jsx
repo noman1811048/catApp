@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Heart, ThumbsUp, ThumbsDown } from 'lucide-react';
 import axios from 'axios';
+import { BeatLoader } from 'react-spinners';
 
 const VotingTab = () => {
     const [images, setImages] = useState([]);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [votes, setVotes] = useState({});
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         fetchImages();
@@ -17,6 +19,8 @@ const VotingTab = () => {
             setImages(response.data);
         } catch (error) {
             console.error('Error fetching cat images:', error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -26,37 +30,31 @@ const VotingTab = () => {
 
     const handleFavorite = async () => {
         if (images.length > 0 && images[currentImageIndex]) {
+            setLoading(true);
             const currentImage = images[currentImageIndex];
-            console.log('Current image:', currentImage); 
-
-            // Extract the image ID from the URL
             const urlParts = currentImage.url.split('/');
             const fileName = urlParts[urlParts.length - 1];
-            const imageId = fileName.split('.')[0]; 
+            const imageId = fileName.split('.')[0];
 
             try {
                 const response = await axios.post('http://localhost:8080/api/favorites', {
                     image_id: imageId,
-                    sub_id: 'user-123' // Replace with actual user ID or authentication method
+                    sub_id: 'user-123'
                 });
-                console.log("Response:", response);
                 if (response.status === 200) {
-                    alert('Added to favorites!');
-                } else {
-                    alert('Failed to add to favorites. Server responded with an error.');
+                    handleNextImage();
                 }
             } catch (error) {
                 console.error('Error adding to favorites:', error.response?.data || error.message);
-                alert('Failed to add to favorites. Please try again.');
+            } finally {
+                setLoading(false);
             }
-        } else {
-            alert('No image available to favorite');
         }
     };
 
-
     const handleVote = async (value) => {
         if (images.length > 0 && images[currentImageIndex]) {
+            setLoading(true);
             const currentImage = images[currentImageIndex];
             const urlParts = currentImage.url.split('/');
             const fileName = urlParts[urlParts.length - 1];
@@ -68,45 +66,44 @@ const VotingTab = () => {
                 value: value
             };
 
-            console.log('Sending vote data:', voteData);
-
             try {
                 const response = await axios.post('http://localhost:8080/api/votes', voteData, {
                     headers: {
                         'Content-Type': 'application/json'
                     }
                 });
-                console.log("Vote response:", response);
                 if (response.status === 201) {
                     setVotes(prev => ({ ...prev, [imageId]: value }));
-                    console.log(votes)
-                    alert(value === 1 ? 'Upvoted!' : 'Downvoted!');
-                } else {
-                    alert('Failed to vote. Server responded with an error.');
+                    handleNextImage();
                 }
             } catch (error) {
                 console.error('Error voting:', error.response?.data || error.message);
-                alert('Failed to vote. Please try again.');
+            } finally {
+                setLoading(false);
             }
-        } else {
-            alert('No image available to vote on');
         }
     };
 
     return (
         <div className="p-4">
-            {images.length > 0 ? (
-                <div>
-                    <img
-                        src={images[currentImageIndex].url}
-                        alt="Random cat"
-                        className="w-full rounded-md mb-4"
-                    />
-                    <p>{images[currentImageIndex].id}</p>
-                </div>
-            ) : (
-                <p>Loading images...</p>
-            )}
+            <div className="relative w-full h-96">
+                {loading || images.length === 0 ? (
+                    <div className="flex justify-center items-center h-full">
+                        <BeatLoader color="#F97316" size={15} />
+                    </div>
+                ) : (
+                    <div className="relative w-full h-full">
+                        <img
+                            src={images[currentImageIndex].url}
+                            alt="Random cat"
+                            className="absolute w-full h-full object-cover rounded-md"
+                        />
+                        <p className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded">
+                            {images[currentImageIndex].id}
+                        </p>
+                    </div>
+                )}
+            </div>
             <div className="flex justify-between items-center px-2 mt-4">
                 <Heart
                     className="text-gray-400 hover:text-red-500 cursor-pointer"

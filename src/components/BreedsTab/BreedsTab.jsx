@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ChevronDown } from 'lucide-react';
+import { BeatLoader } from 'react-spinners';
 
 const API_BASE_URL = 'http://localhost:8080';
 
@@ -29,7 +30,7 @@ const BreedsTab = () => {
       setBreeds(data);
       if (data.length > 0) setSelectedBreed(data[0]);
     } catch (err) {
-      setError('Failed to load breeds. Please try again later.', err);
+      setError('Failed to load breeds. Please try again later.',err);
     } finally {
       setIsLoading(false);
     }
@@ -43,7 +44,7 @@ const BreedsTab = () => {
       const data = await response.json();
       if (data.length > 0) setCatImage(data[0]);
     } catch (err) {
-      setError('Failed to load cat image. Please try again later.', err);
+      setError('Failed to load cat image. Please try again later.',err);
     } finally {
       setIsLoading(false);
     }
@@ -54,7 +55,12 @@ const BreedsTab = () => {
     setIsDropdownOpen(false);
   };
 
-  if (isLoading && breeds.length === 0) return <div>Loading...</div>;
+  if (isLoading && breeds.length === 0) return (
+    <div className="flex justify-center items-center h-64">
+      <BeatLoader color="#F97316" size={15} />
+    </div>
+  );
+
   if (error) return <div>{error}</div>;
 
   return (
@@ -68,7 +74,7 @@ const BreedsTab = () => {
           <ChevronDown size={20} className={`transition-transform duration-200 ${isDropdownOpen ? 'transform rotate-180' : ''}`} />
         </button>
         {isDropdownOpen && (
-          <div className="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1">
+          <div className="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-y-auto">
             {breeds.map((breed) => (
               <button
                 key={breed.id}
@@ -81,15 +87,19 @@ const BreedsTab = () => {
           </div>
         )}
       </div>
-      {isLoading ? (
-        <div>Loading cat image...</div>
-      ) : catImage ? (
-        <img src={catImage.url} alt={`${selectedBreed.name} cat`} className="w-full rounded-md mb-4" />
-      ) : (
-        <div>No image available for this breed</div>
-      )}
+      <div className="relative h-96">
+        {isLoading ? (
+          <div className="flex justify-center items-center h-full">
+            <BeatLoader color="#F97316" size={15} />
+          </div>
+        ) : catImage ? (
+          <img src={catImage.url} alt={`${selectedBreed.name} cat`} className="w-full h-full object-cover rounded-md" />
+        ) : (
+          <div className="flex justify-center items-center h-full">No image available for this breed</div>
+        )}
+      </div>
       {selectedBreed && (
-        <div>
+        <div className="mt-4">
           <h3 className="font-bold">
             {selectedBreed.name} <span className="font-normal text-gray-500">({selectedBreed.origin})</span>
           </h3>
