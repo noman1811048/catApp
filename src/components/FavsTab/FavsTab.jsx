@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Trash2, Grid, List } from 'lucide-react';
 import { BeatLoader } from 'react-spinners';
+import config from '../../config/config.json';
 
 const FavsTab = () => {
   const [favoriteCats, setFavoriteCats] = useState([]);
@@ -15,7 +16,7 @@ const FavsTab = () => {
   const fetchFavorites = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('http://localhost:8080/api/favorites', {
+      const response = await axios.get(`${config.apiBaseURL}/api/favorites`, {
         params: { sub_id: 'user-123' }
       });
       setFavoriteCats(response.data);
@@ -29,7 +30,7 @@ const FavsTab = () => {
   const removeFavorite = async (favoriteId) => {
     setLoading(true);
     try {
-      await axios.delete(`http://localhost:8080/api/favorites/${favoriteId}`);
+      await axios.delete(`${config.apiBaseURL}/api/favorites/${favoriteId}`);
       await fetchFavorites();
     } catch (error) {
       console.error('Error removing favorite:', error);
@@ -63,20 +64,23 @@ const FavsTab = () => {
       ) : (
         <div className={`flex-grow overflow-y-auto ${viewMode === 'grid' ? 'max-h-64' : ''}`}>
           <div
-            className={`grid ${viewMode === 'grid' ? 'grid-cols-2 gap-4' : 'grid-cols-1'
-              } ${viewMode === 'list' ? 'max-h-64 overflow-y-auto' : ''}`}
+            className={`grid ${
+              viewMode === 'grid' ? 'grid-cols-2 gap-4' : 'grid-cols-1'
+            } ${viewMode === 'list' ? 'max-h-64 overflow-y-auto' : ''}`}
           >
             {favoriteCats.map((cat, index) => (
               <div
                 key={cat.id}
-                className={`relative p-2 ${viewMode === 'list' ? 'flex items-center justify-center h-48' : ''} ${viewMode === 'list' && index !== favoriteCats.length - 1 ? 'mb-4' : ''
-                  }`}
+                className={`relative p-2 ${
+                  viewMode === 'list' ? 'flex items-center justify-center h-48' : ''
+                } ${viewMode === 'list' && index !== favoriteCats.length - 1 ? 'mb-4' : ''}`}
               >
                 <img
                   src={cat.image.url}
                   alt={`Favorite cat ${cat.id}`}
-                  className={`object-cover rounded-md ${viewMode === 'grid' ? 'w-full h-48' : 'w-96 h-48 rounded-lg'
-                    }`}
+                  className={`object-cover rounded-md ${
+                    viewMode === 'grid' ? 'w-full h-48' : 'w-96 h-48 rounded-lg'
+                  }`}
                 />
                 <button
                   onClick={() => removeFavorite(cat.id)}

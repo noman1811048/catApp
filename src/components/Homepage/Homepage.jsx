@@ -6,7 +6,7 @@ import BreedsTab from '../BreedsTab/BreedsTab';
 import FavsTab from '../FavsTab/FavsTab';
 import { Heart, Search } from 'lucide-react';
 
-const Home = () => {
+const Homepage = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -84,4 +84,4 @@ const Home = () => {
     );
 };
 
-export default Home;
+export default Homepage;

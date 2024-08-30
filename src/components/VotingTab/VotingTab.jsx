@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Heart, ThumbsUp, ThumbsDown } from 'lucide-react';
 import axios from 'axios';
 import { BeatLoader } from 'react-spinners';
+import config from '../../config/config.json';
 
 const VotingTab = () => {
     const [images, setImages] = useState([]);
@@ -13,9 +14,10 @@ const VotingTab = () => {
         fetchImages();
     }, []);
 
+    //display random image
     const fetchImages = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/api/cat-images');
+            const response = await axios.get(`${config.apiBaseURL}/api/cat-images`);
             setImages(response.data);
         } catch (error) {
             console.error('Error fetching cat images:', error);
@@ -28,6 +30,7 @@ const VotingTab = () => {
         setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
     };
 
+    //Add image as a favorite
     const handleFavorite = async () => {
         if (images.length > 0 && images[currentImageIndex]) {
             setLoading(true);
@@ -37,7 +40,7 @@ const VotingTab = () => {
             const imageId = fileName.split('.')[0];
 
             try {
-                const response = await axios.post('http://localhost:8080/api/favorites', {
+                const response = await axios.post(`${config.apiBaseURL}/api/favorites`, {
                     image_id: imageId,
                     sub_id: 'user-123'
                 });
@@ -52,6 +55,7 @@ const VotingTab = () => {
         }
     };
 
+    //Function for vote and Unvote
     const handleVote = async (value) => {
         if (images.length > 0 && images[currentImageIndex]) {
             setLoading(true);
@@ -67,13 +71,14 @@ const VotingTab = () => {
             };
 
             try {
-                const response = await axios.post('http://localhost:8080/api/votes', voteData, {
+                const response = await axios.post(`${config.apiBaseURL}/api/votes`, voteData, {
                     headers: {
                         'Content-Type': 'application/json'
                     }
                 });
                 if (response.status === 201) {
                     setVotes(prev => ({ ...prev, [imageId]: value }));
+                    console.log(votes)
                     handleNextImage();
                 }
             } catch (error) {

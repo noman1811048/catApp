@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { BeatLoader } from 'react-spinners';
+import config from '../../config/config.json';
 
-const API_BASE_URL = 'http://localhost:8080';
 
 const BreedsTab = () => {
   const [breeds, setBreeds] = useState([]);
@@ -24,7 +24,7 @@ const BreedsTab = () => {
 
   const fetchBreeds = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/breeds`);
+      const response = await fetch(`${config.apiBaseURL}/api/breeds`);
       if (!response.ok) throw new Error('Failed to fetch breeds');
       const data = await response.json();
       setBreeds(data);
@@ -39,7 +39,7 @@ const BreedsTab = () => {
   const fetchCatImageByBreed = async (breedId) => {
     try {
       setIsLoading(true);
-      const response = await fetch(`${API_BASE_URL}/api/cat-images/by-breed?breed_id=${breedId}`);
+      const response = await fetch(`${config.apiBaseURL}/api/cat-images/by-breed?breed_id=${breedId}`);
       if (!response.ok) throw new Error('Failed to fetch cat image');
       const data = await response.json();
       if (data.length > 0) setCatImage(data[0]);
@@ -104,7 +104,7 @@ const BreedsTab = () => {
             {selectedBreed.name} <span className="font-normal text-gray-500">({selectedBreed.origin})</span>
           </h3>
           <p className="mt-2 text-gray-700">{selectedBreed.description}</p>
-          <p>The Abyssinian is easy to care for, and a joy to have in your home. They’re affectionate cats and love both people and other animals.</p>
+          {/* <p>The {selectedBreed.name} is easy to care for, and a joy to have in your home. They’re affectionate cats and love both people and other animals.</p> */}
           <a href={`https://en.wikipedia.org/wiki/${selectedBreed.name}_cat`} target="_blank" rel="noopener noreferrer" className="text-orange-500 mt-2 block uppercase text-sm font-semibold">
             Wikipedia
           </a>
